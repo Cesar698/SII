@@ -6,7 +6,7 @@ import time
 # CONFIGURACIÓN GENERAL DE MODBUS (UN SOLO CLIENTE)
 # ---------------------------------------------------
 client = ModbusSerialClient(
-    port="/dev/ttyUSB01",
+    port="/dev/ttyHS0",
     baudrate=9600,
     bytesize=8,
     parity='N',
