@@ -63,7 +63,7 @@ def modo_analogico():
         lectura = client.read_holding_registers(
             address=REG_ANALOG,
             count=1,
-            device_id=UNIT_ENTRADAS
+            unit=UNIT_ENTRADAS
         )
 
         if lectura.isError():
@@ -80,17 +80,17 @@ def modo_analogico():
         # Control automático
         if metros >= nivel_max:
             print("🔴 Nivel alto → Activando salida")
-            client.write_coil(address=COIL_SALIDA, value=True, device_id=UNIT_SALIDA)
+            client.write_coil(address=COIL_SALIDA, value=True, unit=UNIT_SALIDA)
 
         elif metros <= nivel_min:
             print("🔵 Nivel bajo → Desactivando salida")
-            client.write_coil(address=COIL_SALIDA, value=False, device_id=UNIT_SALIDA)
+            client.write_coil(address=COIL_SALIDA, value=False, unit=UNIT_SALIDA)
 
         # Leer estado real
         salida = client.read_coils(
             address=COIL_SALIDA,
             count=1,
-            device_id=UNIT_SALIDA
+            unit=UNIT_SALIDA
         )
 
         estado = "ENCENDIDA" if salida.bits and salida.bits[0] else "APAGADA"
@@ -110,7 +110,7 @@ def modo_digital():
         entrada = client.read_discrete_inputs(
             address=DIG_ACTIVAR,
             count=2,
-            device_id=UNIT_ENTRADAS
+            unit=UNIT_ENTRADAS
         )
 
         if entrada.isError():
@@ -127,17 +127,17 @@ def modo_digital():
         # Control por señales digitales
         if activar:
             print("🔴 Activando salida...")
-            client.write_coil(address=COIL_SALIDA, value=True, device_id=UNIT_SALIDA)
+            client.write_coil(address=COIL_SALIDA, value=True, unit=UNIT_SALIDA)
 
         if desactivar:
             print("🔵 Desactivando salida...")
-            client.write_coil(address=COIL_SALIDA, value=False, device_id=UNIT_SALIDA)
+            client.write_coil(address=COIL_SALIDA, value=False, unit=UNIT_SALIDA)
 
         # Ver estado real
         salida = client.read_coils(
             address=COIL_SALIDA,
             count=1,
-            device_id=UNIT_SALIDA
+            unit=UNIT_SALIDA
         )
 
         estado = "ENCENDIDA" if salida.bits and salida.bits[0] else "APAGADA"
