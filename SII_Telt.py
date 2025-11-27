@@ -105,11 +105,11 @@ def modo_digital():
     print("\n🔧 MODO 2: Control digital por Modbus (Equipo 2)\n")
 
     while True:
-        Flotador_Alto = client.read_discrete_inputs(address= 0, count=1, slave= 32)
+        Flotador_Alto = client.read_discrete_inputs(address= 0, slave= 32)
         #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
-        Flotador_Bajo = client.read_discrete_inputs(address= 1, count=1, slave= 32)
+        Flotador_Bajo = client.read_discrete_inputs(address= 1, slave= 32)
         if Flotador_Alto.isError():
-            print("⚠ Error leyendo digital 1.")
+            print("⚠ Error leyendo digital 2.")
             time.sleep(2)
             continue
         if Flotador_Bajo.isError():
