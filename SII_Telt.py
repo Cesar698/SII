@@ -1,169 +1,137 @@
 from pymodbus.client import ModbusSerialClient
 import time
 
-
-# ---------------------------------------------------
-# CONFIGURACIÓN MODBUS
-# ---------------------------------------------------
+# -----------------------------------------------------------
+# CONFIGURACIÓN MODBUS SERIAL (Teltonika)
+# -----------------------------------------------------------
 client = ModbusSerialClient(
-    port="/dev/ttyHS0",
+    port="/dev/ttyUSB0",
     baudrate=9600,
-    bytesize=8,
-    parity='N',
+    parity="N",
     stopbits=1,
-    timeout=1,
-    reconnect_delay=5,
-    reconnect_delay_max=60,
-    retries=3,
-    handle_local_echo=False
+    bytesize=8,
+    timeout=1
 )
 
-print("🔄 Conectando al bus Modbus...")
+# IDs de los dos equipos
+EQUIPO_SALIDA_DIGITAL = 31
+EQUIPO_ENTRADAS_O_ANALOG = 32
+
+# -----------------------------------------------------------
+# CONEXIÓN MODBUS
+# -----------------------------------------------------------
 if not client.connect():
-    print("❌ Error: NO se pudo conectar al Modbus.")
+    print("❌ Error: No se pudo conectar al bus Modbus.")
     exit()
-print("✅ Conexión Modbus establecida.\n")
+else:
+    print("✅ Conectado al bus Modbus correctamente.")
 
 
-# ---------------------------------------------------
-# IDs DE EQUIPO
-# ---------------------------------------------------
-UNIT_SALIDA = 31       # Equipo que TIENE la salida digital
-UNIT_ENTRADAS = 32     # Equipo que TIENE el sensor y/o digitales
-
-# Direcciones Modbus
-COIL_SALIDA = 1        # Salida digital del equipo 31
-REG_ANALOG = 1         # Registro analógico del equipo 32
-DIG_ACTIVAR = 1        # Digital activar
-DIG_DESACTIVAR = 2     # Digital desactivar
-
-
-# ---------------------------------------------------
-# FUNCIÓN: LECTURA ANALÓGICA
-# ---------------------------------------------------
+# ===========================================================
+# MODO ANALÓGICO (LEE ENTRADA ANALÓGICA DEL EQUIPO 32)
+# ===========================================================
 def modo_analogico():
-    print("\n------ MODO ANALÓGICO 4-20 mA ------\n")
 
-    # Parámetros de usuario
+    print("\n---- MODO ANALÓGICO ----")
+    print("Leyendo entrada analógica del equipo 32...\n")
+
     while True:
         try:
-            base_bar = float(input("Valor de referencia del sensor (3, 6 o 10 bares): "))
-            if base_bar in (3, 6, 10):
-                break
-        except:
-            pass
-        print("❌ Valor no válido.")
+            lectura = client.read_holding_registers(address=0, count=1, unit=EQUIPO_ENTRADAS_O_ANALOG)
 
-    nivel_max = float(input("Nivel máximo (m): "))
-    nivel_min = float(input("Nivel mínimo (m): "))
+            if lectura.isError():
+                print("❌ Error al leer la entrada analógica.")
+            else:
+                valor_raw = lectura.registers[0]
+                # Conversión típica 4-20 mA → 0-100%
+                porcentaje = (valor_raw / 4095) * 100
 
-    print("\n📡 Iniciando lectura de sensor…\n")
+                print(f"Valor bruto: {valor_raw}   →   {porcentaje:.2f}%")
 
-    while True:
-        lectura = client.read_holding_registers(
-            address=REG_ANALOG,
-            count=1,
-            unit=UNIT_ENTRADAS
-        )
-
-        if lectura.isError():
-            print("⚠ Error leyendo el sensor, esperando...")
             time.sleep(2)
-            continue
 
-        raw = lectura.registers[0]
-        bar_actual = raw / 100.0
-        metros = bar_actual * 10.1972
-
-        print(f"📏 Nivel estimado: {metros:.2f} m")
-
-        # Control automático
-        if metros >= nivel_max:
-            print("🔴 Nivel alto → Activando salida")
-            client.write_coil(address=COIL_SALIDA, value=True, unit=UNIT_SALIDA)
-
-        elif metros <= nivel_min:
-            print("🔵 Nivel bajo → Desactivando salida")
-            client.write_coil(address=COIL_SALIDA, value=False, unit=UNIT_SALIDA)
-
-        # Leer estado real
-        salida = client.read_coils(
-            address=COIL_SALIDA,
-            count=1,
-            unit=UNIT_SALIDA
-        )
-
-        estado = "ENCENDIDA" if salida.bits and salida.bits[0] else "APAGADA"
-        print(f"💡 Estado salida: {estado}")
-
-        print("⏳ Esperando siguiente lectura...\n")
-        time.sleep(5)
+        except Exception as e:
+            print(f"⚠ Error en modo analógico: {e}")
+            time.sleep(2)
 
 
-# ---------------------------------------------------
-# FUNCIÓN: MODO DIGITAL
-# ---------------------------------------------------
+# ===========================================================
+# MODO DIGITAL (LEE 2 ENTRADAS Y CONTROLA UNA SALIDA EN EQUIPO 31)
+# ===========================================================
 def modo_digital():
-    print("\n------ MODO DIGITAL POR FLOTADORES ------\n")
+
+    print("\n---- MODO DIGITAL ----")
+    print("Leyendo entradas digitales del equipo 32 y controlando salida del equipo 31...\n")
+
+    salida_actual = 0  # estado local de la salida digital
 
     while True:
-        entrada = client.read_discrete_inputs(
-            address=DIG_ACTIVAR,
-            count=2,
-            unit=UNIT_ENTRADAS
-        )
+        try:
+            # Leer dos entradas digitales del equipo 32
+            entradas = client.read_discrete_inputs(address=0, count=2, unit=EQUIPO_ENTRADAS_O_ANALOG)
 
-        if entrada.isError():
-            print("⚠ Error leyendo entradas digitales.")
-            time.sleep(2)
-            continue
+            if entradas.isError():
+                print("❌ Error al leer entradas digitales.")
+            else:
+                entrada1 = entradas.bits[0]
+                entrada2 = entradas.bits[1]
 
-        activar = entrada.bits[0] if len(entrada.bits) > 0 else False
-        desactivar = entrada.bits[1] if len(entrada.bits) > 1 else False
+                print(f"Entrada 1: {entrada1}   |   Entrada 2: {entrada2}")
 
-        print(f"Entrada Activar:    {'ON' if activar else 'OFF'}")
-        print(f"Entrada Desactivar: {'ON' if desactivar else 'OFF'}")
+                # Lógica:
+                # Entrada 1 → activa salida del equipo 31
+                # Entrada 2 → desactiva salida del equipo 31
 
-        # Control por señales digitales
-        if activar:
-            print("🔴 Activando salida...")
-            client.write_coil(address=COIL_SALIDA, value=True, unit=UNIT_SALIDA)
+                nuevo_estado = salida_actual
 
-        if desactivar:
-            print("🔵 Desactivando salida...")
-            client.write_coil(address=COIL_SALIDA, value=False, unit=UNIT_SALIDA)
+                if entrada1 == 1:
+                    nuevo_estado = 1
+                    print("➡ Activando salida digital del equipo 31...")
 
-        # Ver estado real
-        salida = client.read_coils(
-            address=COIL_SALIDA,
-            count=1,
-            unit=UNIT_SALIDA
-        )
+                if entrada2 == 1:
+                    nuevo_estado = 0
+                    print("➡ Desactivando salida digital del equipo 31...")
 
-        estado = "ENCENDIDA" if salida.bits and salida.bits[0] else "APAGADA"
-        print(f"💡 Estado salida: {estado}")
+                # Si hay cambio, escribir al equipo 31
+                if nuevo_estado != salida_actual:
+                    respuesta = client.write_coil(address=0, value=nuevo_estado, unit=EQUIPO_SALIDA_DIGITAL)
 
-        print("⏳ Próximo escaneo...\n")
-        time.sleep(2)
+                    if respuesta.isError():
+                        print("❌ Error al escribir la salida digital.")
+                    else:
+                        estado_txt = "ACTIVADA" if nuevo_estado else "DESACTIVADA"
+                        print(f"✔ Salida digital {estado_txt} correctamente.")
+
+                    salida_actual = nuevo_estado
+
+            time.sleep(1)
+
+        except Exception as e:
+            print(f"⚠ Error en modo digital: {e}")
+            time.sleep(1)
 
 
-# ---------------------------------------------------
+# ===========================================================
 # MENÚ PRINCIPAL
-# ---------------------------------------------------
-print("Seleccione el modo:")
-print("1) Sensor de presión (4-20 mA)")
-print("2) FLOTADORES (entradas digitales)")
+# ===========================================================
+def menu():
+    print("\n====================================")
+    print("   SISTEMA DE MONITOREO MODBUS")
+    print("====================================")
+    print("1) Modo Analógico")
+    print("2) Modo Digital")
+    print("====================================\n")
 
-while True:
-    opcion = input("\nIngrese opción 1 o 2: ")
+    opcion = input("Seleccione una opción (1 o 2): ")
 
     if opcion == "1":
         modo_analogico()
-        break
-
     elif opcion == "2":
         modo_digital()
-        break
-
     else:
-        print("❌ Opción inválida.")
+        print("Opción inválida.")
+        menu()
+
+
+# Iniciar programa
+menu()
