@@ -62,7 +62,7 @@ def modo_analogico():
 
     while True:
         # Leer registro del equipo de ENTRADAS
-        lectura = client.read_holding_registers(address= 1, slave= 32)
+        lectura = client.read_holding_registers(address= 0, slave= 32)
         #lectura = client.read_holding_registers(REG_ANALOG, 1, device_id=UNIT_ENTRADAS)
 
         if lectura.isError():
@@ -79,12 +79,12 @@ def modo_analogico():
         # Control del equipo de SALIDA
         if metros >= nivel_max:
             print("🔴 Activando salida (Equipo 1)")
-            client.write_coil(address= 1, value= True, slave= 31)
+            client.write_coil(address= 0, value= True, slave= 31)
             #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
         elif metros <= nivel_min:
             print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(address= 1, value= False, slave= 31)
+            client.write_coil(address= 0, value= False, slave= 31)
             #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
 
         # Estado real de la salida
@@ -105,7 +105,7 @@ def modo_digital():
     print("\n🔧 MODO 2: Control digital por Modbus (Equipo 2)\n")
 
     while True:
-        entrada = client.read_discrete_inputs(address= 1, slave= 32)
+        entrada = client.read_discrete_inputs(address= 0, slave= 32)
         #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
 
         if entrada.isError():
@@ -122,16 +122,16 @@ def modo_digital():
         # Control del equipo de SALIDA
         if activar:
             print("🔴 Activando salida (Equipo 1)")
-            client.write_coil(address=1, value=True, slave= 31)
+            client.write_coil(address=0, value=True, slave= 31)
             #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
         if desactivar:
             print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(address=1, value=False, slave=31)
+            client.write_coil(address=0, value=False, slave=31)
             #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
 
         # Estado actual de salida
-        salida = client.read_coils(address=1,slave=31)
+        salida = client.read_coils(address=0,slave=31)
         #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
         estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
         print(f"💡 Estado salida: {estado}")
