@@ -11,7 +11,12 @@ client = ModbusSerialClient(
     bytesize=8,
     parity='N',
     stopbits=1,
-    timeout=1
+    timeout=1,
+    reconnect_delay= 10,
+    reconnect_delay_max= 600,
+    retries= 3,
+    name= "com",
+    handle_local_echo= False
 )
 
 if not client.connect():
@@ -56,7 +61,8 @@ def modo_analogico():
 
     while True:
         # Leer registro del equipo de ENTRADAS
-        lectura = client.read_holding_registers(REG_ANALOG, 1, unit=UNIT_ENTRADAS)
+        lectura = client.read_holding_registers(address= 1, device_id= 32)
+        #lectura = client.read_holding_registers(REG_ANALOG, 1, device_id=UNIT_ENTRADAS)
 
         if lectura.isError():
             print("⚠ Error leyendo sensor.")
@@ -72,14 +78,17 @@ def modo_analogico():
         # Control del equipo de SALIDA
         if metros >= nivel_max:
             print("🔴 Activando salida (Equipo 1)")
-            client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
+            client.write_coil(address= 1, value= True, device_id= 31)
+            #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
         elif metros <= nivel_min:
             print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+            client.write_coil(address= 1, value= False, device_id= 31)
+            #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
 
         # Estado real de la salida
-        salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
+        salida = client.read_coils(address=1,device_id=31)
+        #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
         estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
         print(f"💡 Estado salida: {estado}")
 
@@ -94,7 +103,8 @@ def modo_digital():
     print("\n🔧 MODO 2: Control digital por Modbus (Equipo 2)\n")
 
     while True:
-        entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
+        entrada = client.read_discrete_inputs(address= 1, device_id= 32)
+        #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
 
         if entrada.isError():
             print("⚠ Error leyendo entradas digitales.")
@@ -110,14 +120,17 @@ def modo_digital():
         # Control del equipo de SALIDA
         if activar:
             print("🔴 Activando salida (Equipo 1)")
-            client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
+            client.write_coil(address=1, value=True, device_id= 31)
+            #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
         if desactivar:
             print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+            client.write_coil(address=1, value=False, device_id=31)
+            #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
 
         # Estado actual de salida
-        salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
+        salida = client.read_coils(address=1,device_id=31)
+        #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
         estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
         print(f"💡 Estado salida: {estado}")
 
