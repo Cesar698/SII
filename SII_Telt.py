@@ -114,8 +114,8 @@ def modo_digital():
             time.sleep(2)
             continue
 
-        activar = Alto.bits[0]
-        desactivar = Bajo.bits[0]
+        activar = Alto.bits[0] and Bajo.bits[0]
+        desactivar = Bajo.bits[1] and Alto.bits[1]
 
         print(f"Entrada Activar:    {'ON' if activar else 'OFF'}")
         print(f"Entrada Desactivar: {'ON' if desactivar else 'OFF'}")
@@ -138,7 +138,7 @@ def modo_digital():
         print(f"💡 Estado salida: {estado}")
 
         print("⏳ Escaneo...\n")
-        time.sleep(5)
+        time.sleep(2)
 
 
 
