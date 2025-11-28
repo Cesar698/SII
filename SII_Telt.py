@@ -105,33 +105,33 @@ def modo_digital():
     print("\n🔧 MODO 2: Control digital por Modbus (Equipo 2)\n")
 
     while True:
-        Alto = client.read_discrete_inputs(address= 0, slave= 32)
+        Bajo = client.read_discrete_inputs(address= 0, slave= 32)
         #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
-        Bajo = client.read_discrete_inputs(address= 1, slave= 32 )
+        Alto = client.read_discrete_inputs(address= 1, slave= 32 )
 
         if Alto.isError ():
-            print("⚠ Error leyendo entradas digitales.")
+            print("⚠ Error leyendo Flotador Alto.")
             time.sleep(2)
             continue
-
-        activar = Alto.bits[0] and Bajo.bits[0]
-        desactivar = Bajo.bits[1] and Alto.bits[1]
+        if Bajo.isError ():
+            print("⚠ Error leyendo Flotador Bajo.")
+            time.sleep(2)
+            continue
         Flotador_A = Alto.bits[0]
         Flotador_B = Bajo.bits[0]
 
 
         print(f"Flotador Alto: {'ON' if Flotador_A else 'OFF'}")
         print(f"Flotador Bajo: {'ON' if Flotador_B else 'OFF'}")
-        print(f"Entrada Activar:    {'ON' if activar else 'OFF'}")
-        print(f"Entrada Desactivar: {'ON' if desactivar else 'OFF'}")
+
 
         # Control del equipo de SALIDA
-        if activar or Flotador_A:
+        if  not Flotador_B:
             print("🔴 Activando salida (Equipo 1)")
             client.write_coil(address=0, value=True, slave= 31)
             #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
-        if desactivar or Flotador_B:
+        if Flotador_A and Flotador_B :
             print("🔵 Desactivando salida (Equipo 1)")
             client.write_coil(address=0, value=False, slave=31)
             #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
