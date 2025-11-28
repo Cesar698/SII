@@ -48,6 +48,8 @@ while True:
         print("✅ Equipo 32 (Equipo Tanque) detectado")
     else:
         print("❌ Equipo 32 (Equipo Tanque) NO responde")
+        print("🔵 Desactivando salida (Equipo 1)")
+        client.write_coil(address=0, value=False, slave=31)
 
     # ¿Ambos presentes?
     if equipo_31_ok and equipo_32_ok:
