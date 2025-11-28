@@ -19,11 +19,7 @@ client = ModbusSerialClient(
     handle_local_echo= False
 )
 
-if not client.connect():
-    print("❌ Error: no se detecto el Modbus.")
-    exit()
-else:
-    print("✅ Conexión Modbus establecida.\n")
+
 
 
 # ---------------------------------------------------
