@@ -12,8 +12,8 @@ client = ModbusSerialClient(
     parity='N',
     stopbits=1,
     timeout=1,
-    reconnect_delay= 10,
-    reconnect_delay_max= 6000,
+    reconnect_delay= 6000,
+    reconnect_delay_max= 60000,
     retries= 5,
     name= "com",
     handle_local_echo= False
@@ -64,13 +64,13 @@ while True:
                 print("⚠ Error leyendo Flotador Alto.")
                 print("🔵 Desactivando salida (Equipo 1)")
                 client.write_coil(address=0, value=False, slave=31)
-                time.sleep(2)
+                time.sleep(10)
                 continue
             if Bajo.isError ():
                 print("⚠ Error leyendo Flotador Bajo.")
                 print("🔵 Desactivando salida (Equipo 1)")
                 client.write_coil(address=0, value=False, slave=31)
-                time.sleep(2)
+                time.sleep(10)
                 continue
             Flotador_A = Alto.bits[0]
             Flotador_B = Bajo.bits[0]
@@ -101,8 +101,8 @@ while True:
             print(f"💡 Estado salida: {estado}")
 
             print("⏳ Escaneo...\n")
-            time.sleep(2)
+            time.sleep(60)
             break
-    print("\n⏳ Reintentando escaneo en 3 segundos...\n")
-    time.sleep(3)
+    print("\n⏳ Reintentando escaneo en 10 segundos...\n")
+    time.sleep(60)
 
