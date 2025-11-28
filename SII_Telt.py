@@ -126,12 +126,12 @@ def modo_digital():
         print(f"Entrada Desactivar: {'ON' if desactivar else 'OFF'}")
 
         # Control del equipo de SALIDA
-        if activar:
+        if activar or Flotador_A:
             print("🔴 Activando salida (Equipo 1)")
             client.write_coil(address=0, value=True, slave= 31)
             #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
-        if desactivar:
+        if desactivar or Flotador_B:
             print("🔵 Desactivando salida (Equipo 1)")
             client.write_coil(address=0, value=False, slave=31)
             #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
