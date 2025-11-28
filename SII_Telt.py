@@ -13,14 +13,14 @@ client = ModbusSerialClient(
     stopbits=1,
     timeout=1,
     reconnect_delay= 10,
-    reconnect_delay_max= 600,
-    retries= 3,
+    reconnect_delay_max= 6000,
+    retries= 5,
     name= "com",
     handle_local_echo= False
 )
 
-if not client.connect():
-    print("❌ Error: no se pudo conectar al puerto COM.")
+if not client.connect(slave = 31) or not client.connect(slave = 32) :
+    print("❌ Error: no se detecto el Modbus.")
     exit()
 else:
     print("✅ Conexión Modbus establecida.\n")
