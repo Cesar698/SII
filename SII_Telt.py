@@ -52,6 +52,7 @@ while True:
     # ¿Ambos presentes?
     if equipo_31_ok and equipo_32_ok:
         print("\n🎉 Ambos equipos Modbus detectados correctamente. Iniciando programa...\n")
+        
         while True:
             Bajo = client.read_discrete_inputs(address= 0, slave= 32)
             #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
@@ -99,7 +100,7 @@ while True:
 
             print("⏳ Escaneo...\n")
             time.sleep(2)
-
+            break
     print("\n⏳ Reintentando escaneo en 3 segundos...\n")
     time.sleep(3)
 
