@@ -105,16 +105,17 @@ def modo_digital():
     print("\n🔧 MODO 2: Control digital por Modbus (Equipo 2)\n")
 
     while True:
-        entrada = client.read_discrete_inputs(address= 0, slave= 32)
+        Alto = client.read_discrete_inputs(address= 0, slave= 32)
         #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
+        Bajo = client.read_discrete_inputs(address= 1, slave= 32 )
 
-        if entrada.isError():
+        if Alto.isError ():
             print("⚠ Error leyendo entradas digitales.")
             time.sleep(2)
             continue
 
-        activar = entrada.bits[0]
-        desactivar = entrada.bits[1]
+        activar = Alto.bits[0]
+        desactivar = Bajo.bits[0]
 
         print(f"Entrada Activar:    {'ON' if activar else 'OFF'}")
         print(f"Entrada Desactivar: {'ON' if desactivar else 'OFF'}")
@@ -137,7 +138,7 @@ def modo_digital():
         print(f"💡 Estado salida: {estado}")
 
         print("⏳ Escaneo...\n")
-        time.sleep(2)
+        time.sleep(5)
 
 
 
