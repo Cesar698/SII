@@ -13,7 +13,7 @@ client = ModbusSerialClient(
     stopbits=1,
     timeout=1,
     reconnect_delay= 60,
-    reconnect_delay_max= 600,
+    reconnect_delay_max= 6000,
     retries= 5,
     name= "com",
     handle_local_echo= False
@@ -101,8 +101,8 @@ while True:
             print(f"💡 Estado salida: {estado}")
 
             print("⏳ Escaneo...\n")
-            time.sleep(60)
+            time.sleep(10)
             break
     print("\n⏳ Reintentando escaneo en 10 segundos...\n")
-    time.sleep(60)
+    time.sleep(10)
 
