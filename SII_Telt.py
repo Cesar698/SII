@@ -19,23 +19,11 @@ client = ModbusSerialClient(
     handle_local_echo= False
 )
 
-if not client.connect(slave = 31) or not client.connect(slave = 32) :
+if not client.connect():
     print("❌ Error: no se detecto el Modbus.")
     exit()
 else:
     print("✅ Conexión Modbus establecida.\n")
-
-
-# ---------------------------------------------------
-# CONFIGURACIÓN DE DISPOSITIVOS MODBUS
-# ---------------------------------------------------
-UNIT_SALIDA = 31      # Equipo con salida digital
-UNIT_ENTRADAS = 32     # Equipo con entradas analógicas/digitales
-
-COIL_SALIDA = 0       # Dirección coil en equipo 1
-REG_ANALOG =  0       # Register analógico en equipo 2
-DIG_ACTIVAR = 0     # Input digital activar
-DIG_DESACTIVAR = 1    # Input digital desactivar
 
 
 # ---------------------------------------------------
@@ -71,8 +59,7 @@ def modo_analogico():
             continue
 
         raw = lectura.registers[0]
-        bar_actual = raw / 100.0
-        metros = bar_actual * 10.1972
+        metros = raw * 10.1972
 
         print(f"📏 Nivel actual: {metros:.2f} m")
 
