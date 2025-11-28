@@ -111,10 +111,14 @@ def modo_digital():
 
         if Alto.isError ():
             print("⚠ Error leyendo Flotador Alto.")
+            print("🔵 Desactivando salida (Equipo 1)")
+            client.write_coil(address=0, value=False, slave=31)
             time.sleep(2)
             continue
         if Bajo.isError ():
             print("⚠ Error leyendo Flotador Bajo.")
+            print("🔵 Desactivando salida (Equipo 1)")
+            client.write_coil(address=0, value=False, slave=31)
             time.sleep(2)
             continue
         Flotador_A = Alto.bits[0]
@@ -126,12 +130,18 @@ def modo_digital():
 
 
         # Control del equipo de SALIDA
-        if  not Flotador_B:
+        if  not Flotador_B and not Flotador_A:
             print("🔴 Activando salida (Equipo 1)")
             client.write_coil(address=0, value=True, slave= 31)
             #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
         if Flotador_A and Flotador_B :
+            print("🔵 Desactivando salida (Equipo 1)")
+            client.write_coil(address=0, value=False, slave=31)
+            #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+        
+        if Flotador_A and not Flotador_B :
+            print ("Error en flotadores, Favor de Revisar")
             print("🔵 Desactivando salida (Equipo 1)")
             client.write_coil(address=0, value=False, slave=31)
             #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
