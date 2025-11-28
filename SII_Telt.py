@@ -116,7 +116,12 @@ def modo_digital():
 
         activar = Alto.bits[0] and Bajo.bits[0]
         desactivar = Bajo.bits[1] and Alto.bits[1]
+        Flotador_A = Alto.bits[0]
+        Flotador_B = Bajo.bits[0]
 
+
+        print(f"Flotador Alto: {'ON' if Flotador_A else 'OFF'}")
+        print(f"Flotador Bajo: {'ON' if Flotador_B else 'OFF'}")
         print(f"Entrada Activar:    {'ON' if activar else 'OFF'}")
         print(f"Entrada Desactivar: {'ON' if desactivar else 'OFF'}")
 
