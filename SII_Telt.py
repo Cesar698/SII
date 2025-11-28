@@ -100,7 +100,7 @@ while True:
 
             print("⏳ Escaneo...\n")
             time.sleep(2)
-            break
+            
     print("\n⏳ Reintentando escaneo en 3 segundos...\n")
     time.sleep(3)
 
