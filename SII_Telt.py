@@ -19,8 +19,29 @@ client = ModbusSerialClient(
     handle_local_echo= False
 )
 
+print("\n🔍 Verificando dispositivos Modbus...\n")
 
-print("\n🔧 Iniciiando Proceso\n")
+def probar_dispositivo(nombre, slave_id):
+    try:
+        resp = client.read_input_registers(address=0, count=1, slave=slave_id)
+        if resp.isError():
+            print(f"❌ {nombre} (ID {slave_id}) NO responde")
+            return False
+        else:
+            print(f"✅ {nombre} (ID {slave_id}) detectado correctamente")
+            return True
+    except Exception as e:
+        print(f"❌ Error comunicando con {nombre} (ID {slave_id}): {e}")
+        return False
+
+
+equipo_31_ok = probar_dispositivo("Equipo de Pozo", 31)
+equipo_32_ok = probar_dispositivo("Equipo del Tanque", 32)
+
+print("")  # línea en blanco
+
+
+print("\n🔧 Iniciando Proceso\n")
 
 while True:
     Bajo = client.read_discrete_inputs(address= 0, slave= 32)
