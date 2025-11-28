@@ -20,143 +20,56 @@ client = ModbusSerialClient(
 )
 
 
-
-
-# ---------------------------------------------------
-# FUNCIÓN: MODO ANALÓGICO (EQUIPO 2)
-# ---------------------------------------------------
-def modo_analogico():
-    """Modo Sensor Presion"""
-    print("\n🔧 MODO 1: Sensor analógico 4–20 mA (Equipo 2)\n")
-
-    # Configuración del sensor
-    while True:
-        try:
-            base_bar = float(input("Valor de referencia (3, 6 o 10 bares): "))
-            if base_bar in (3, 6, 10):
-                break
-        except:
-            pass
-        print("Valor incorrecto.")
-
-    nivel_max = float(input("Nivel máximo (m): "))
-    nivel_min = float(input("Nivel mínimo (m): "))
-
-    print("\nIniciando monitoreo analógico…\n")
-
-    while True:
-        # Leer registro del equipo de ENTRADAS
-        lectura = client.read_holding_registers(address= 0, slave= 32)
-        #lectura = client.read_holding_registers(REG_ANALOG, 1, device_id=UNIT_ENTRADAS)
-
-        if lectura.isError():
-            print("⚠ Error leyendo sensor.")
-            time.sleep(2)
-            continue
-
-        raw = lectura.registers[0]
-        metros = raw * 10.1972
-
-        print(f"📏 Nivel actual: {metros:.2f} m")
-
-        # Control del equipo de SALIDA
-        if metros >= nivel_max:
-            print("🔴 Activando salida (Equipo 1)")
-            client.write_coil(address= 0, value= True, slave= 31)
-            #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
-
-        elif metros <= nivel_min:
-            print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(address= 0, value= False, slave= 31)
-            #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
-
-        # Estado real de la salida
-        salida = client.read_coils(address=1,device_id=31)
-        #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
-        estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
-        print(f"💡 Estado salida: {estado}")
-
-        print("⏳ Escaneo...\n")
-        time.sleep(5)
-
-
-# ---------------------------------------------------
-# FUNCIÓN: MODO DIGITAL (EQUIPO 2)
-# ---------------------------------------------------
-def modo_digital():
-    """"Modo Flotadores"""
-    print("\n🔧 MODO 2: Control digital por Modbus (Equipo 2)\n")
-
-    while True:
-        Bajo = client.read_discrete_inputs(address= 0, slave= 32)
-        #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
-        Alto = client.read_discrete_inputs(address= 1, slave= 32 )
-
-        if Alto.isError ():
-            print("⚠ Error leyendo Flotador Alto.")
-            print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(address=0, value=False, slave=31)
-            time.sleep(2)
-            continue
-        if Bajo.isError ():
-            print("⚠ Error leyendo Flotador Bajo.")
-            print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(address=0, value=False, slave=31)
-            time.sleep(2)
-            continue
-        Flotador_A = Alto.bits[0]
-        Flotador_B = Bajo.bits[0]
-
-
-        print(f"Flotador Alto: {'ON' if Flotador_A else 'OFF'}")
-        print(f"Flotador Bajo: {'ON' if Flotador_B else 'OFF'}")
-
-
-        # Control del equipo de SALIDA
-        if  not Flotador_B and not Flotador_A:
-            print("🔴 Activando salida (Equipo 1)")
-            client.write_coil(address=0, value=True, slave= 31)
-            #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
-
-        if Flotador_A and Flotador_B :
-            print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(address=0, value=False, slave=31)
-            #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
-        
-        if Flotador_A and not Flotador_B :
-            print ("Error en flotadores, Favor de Revisar")
-            print("🔵 Desactivando salida (Equipo 1)")
-            client.write_coil(address=0, value=False, slave=31)
-            #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
-
-        # Estado actual de salida
-        salida = client.read_coils(address=0,slave=31)
-        #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
-        estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
-        print(f"💡 Estado salida: {estado}")
-
-        print("⏳ Escaneo...\n")
-        time.sleep(2)
-
-
-
-# ---------------------------------------------------
-# MENÚ DE OPERACIÓN
-# ---------------------------------------------------
-print("Seleccione el modo de operación:")
-print("1) Sensor analógico 4–20 mA")
-print("2) Control por entradas digitales")
+print("\n🔧 Iniciiando Proceso\n")
 
 while True:
-    opcion = input("\n Seleccione la Opcion 1 (Sensor Presion) u Opcion 2 (Flotadores) ")
+    Bajo = client.read_discrete_inputs(address= 0, slave= 32)
+    #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
+    Alto = client.read_discrete_inputs(address= 1, slave= 32 )
 
-    if opcion == "1":
-        modo_analogico()
-        break
+    if Alto.isError ():
+        print("⚠ Error leyendo Flotador Alto.")
+        print("🔵 Desactivando salida (Equipo 1)")
+        client.write_coil(address=0, value=False, slave=31)
+        time.sleep(2)
+        continue
+    if Bajo.isError ():
+        print("⚠ Error leyendo Flotador Bajo.")
+        print("🔵 Desactivando salida (Equipo 1)")
+        client.write_coil(address=0, value=False, slave=31)
+        time.sleep(2)
+        continue
+    Flotador_A = Alto.bits[0]
+    Flotador_B = Bajo.bits[0]
 
-    elif opcion == "2":
-        modo_digital()
-        break
 
-    else:
-        print("❌ Opción inválida.")
+    print(f"Flotador Alto: {'ON' if Flotador_A else 'OFF'}")
+    print(f"Flotador Bajo: {'ON' if Flotador_B else 'OFF'}")
+
+
+    # Control del equipo de SALIDA
+    if  not Flotador_B and not Flotador_A:
+        print("🔴 Activando salida (Equipo 1)")
+        client.write_coil(address=0, value=True, slave= 31)
+        #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
+
+    if Flotador_A and Flotador_B :
+        print("🔵 Desactivando salida (Equipo 1)")
+        client.write_coil(address=0, value=False, slave=31)
+        #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+        
+    if Flotador_A and not Flotador_B :
+        print ("Error en flotadores, Favor de Revisar")
+        print("🔵 Desactivando salida (Equipo 1)")
+        client.write_coil(address=0, value=False, slave=31)
+        #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+
+    # Estado actual de salida
+    salida = client.read_coils(address=0,slave=31)
+    #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
+    estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
+    print(f"💡 Estado salida: {estado}")
+
+    print("⏳ Escaneo...\n")
+    time.sleep(2)
+
