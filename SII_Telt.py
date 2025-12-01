@@ -67,7 +67,8 @@ while True:
                 print("⚠ Error leyendo Flotador Alto.")
                 print("🔵 Desactivando salida (Equipo 1)")
                 client.write_coil(address=0, value=False, slave=31)
-                time.sleep(10)
+                print ("Espera 2 minutos para reintentar")
+                time.sleep(120)
                 continue
             if Bajo.isError ():
                 print("⚠ Error leyendo Flotador Bajo.")
