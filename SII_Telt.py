@@ -48,7 +48,7 @@ while True:
         print("✅ Equipo 32 (Equipo Tanque) detectado")
     else:
         print("❌ Equipo 32 (Equipo Tanque) NO responde")
-        print("🔵 Desactivando salida (Equipo 1)")
+
 
     # ¿Ambos presentes?
     if equipo_31_ok and equipo_32_ok:
@@ -106,7 +106,7 @@ while True:
             print(f"💡 Estado salida: {estado}")
 
             print("⏳ Escaneo...\n")
-            time.sleep(10)
+            time.sleep(120)
             break
     print("\n⏳ Reintentando escaneo en 10 segundos...\n")
     time.sleep(10)
