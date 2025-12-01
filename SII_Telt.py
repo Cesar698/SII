@@ -14,7 +14,7 @@ client = ModbusSerialClient(
     timeout=1,
     reconnect_delay= 60,
     reconnect_delay_max= 6000,
-    retries= 5,
+    retries= 10,
     name= "com",
     handle_local_echo= False
 )
@@ -50,6 +50,9 @@ while True:
         print("❌ Equipo 32 (Equipo Tanque) NO responde")
         print("🔵 Desactivando salida (Equipo 1)")
         client.write_coil(address=0, value=False, slave=31)
+        print ("Espera 2 minutos para reintentar")
+        time.sleep(120)
+
 
     # ¿Ambos presentes?
     if equipo_31_ok and equipo_32_ok:
@@ -70,7 +73,8 @@ while True:
                 print("⚠ Error leyendo Flotador Bajo.")
                 print("🔵 Desactivando salida (Equipo 1)")
                 client.write_coil(address=0, value=False, slave=31)
-                time.sleep(10)
+                print ("Espera 2 minutos para reintentar")
+                time.sleep(120)
                 continue
             Flotador_A = Alto.bits[0]
             Flotador_B = Bajo.bits[0]
@@ -87,12 +91,16 @@ while True:
                print("🔵 Desactivando salida (Equipo 1)")
                client.write_coil(address=0, value=False, slave=31)
                #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+               print ("Espera 2 minutos para reintentar")
+               time.sleep(120)
         
             if Flotador_A and not Flotador_B :
                 print ("Error en flotadores, Favor de Revisar")
                 print("🔵 Desactivando salida (Equipo 1)")
                 client.write_coil(address=0, value=False, slave=31)
                 #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+                print ("Espera 2 minutos para reintentar")
+                time.sleep(120)
                 
                 # Estado actual de salida
             salida = client.read_coils(address=0,slave=31)
