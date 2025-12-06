@@ -89,7 +89,7 @@ while True:
                client.write_coil(address=0, value=False, slave=31)
                #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
                print ("Espera 2 minutos para reintentar")
-               time.sleep(10)
+               time.sleep(120)
         
             if Flotador_A and not Flotador_B :
                 print ("Error en flotadores, Favor de Revisar")
@@ -97,7 +97,7 @@ while True:
                 client.write_coil(address=0, value=False, slave=31)
                 #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
                 print ("Espera 2 minutos para reintentar")
-                time.sleep(10)
+                time.sleep(120)
                 
                 # Estado actual de salida
             salida = client.read_coils(address=0,slave=31)
@@ -106,7 +106,7 @@ while True:
             print(f"💡 Estado salida: {estado}")
 
             print("⏳ Escaneo...\n")
-            time.sleep(10)
+            time.sleep(120)
             break
     print("\n⏳ Reintentando escaneo en 10 segundos...\n")
     time.sleep(10)
