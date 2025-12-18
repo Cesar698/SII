@@ -58,7 +58,10 @@ while True:
             Bajo = client.read_discrete_inputs(address= 0, slave= 32)
             #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
             Alto = client.read_discrete_inputs(address= 1, slave= 32 )
-                
+            salida = client.read_coils(address=0,slave=31)
+            #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
+            estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
+            print(f"💡 Estado salida: {estado}")   
             if Alto.isError ():
                 print("⚠ Error leyendo Flotador Alto.")
                 print("🔵 Desactivando salida (Equipo 1)")
