@@ -58,24 +58,20 @@ while True:
             Bajo = client.read_discrete_inputs(address= 0, slave= 32)
             #entrada = client.read_discrete_inputs(DIG_ACTIVAR, 2, unit=UNIT_ENTRADAS)
             Alto = client.read_discrete_inputs(address= 1, slave= 32 )
-            
-            salida = client.read_coils(address=0,slave=31)
-            #salida = client.read_coils(COIL_SALIDA, 1, unit=UNIT_SALIDA)
-            estado = "ENCENDIDA" if salida.bits[0] else "APAGADA"
-            print(f"💡 Estado salida: {estado}")   
+                
             if Alto.isError ():
                 print("⚠ Error leyendo Flotador Alto.")
                 print("🔵 Desactivando salida (Equipo 1)")
                 client.write_coil(address=0, value=False, slave=31)
                 print ("Espera 2 minutos para reintentar")
-                time.sleep(120)
+                time.sleep(10)
                 continue
             if Bajo.isError ():
                 print("⚠ Error leyendo Flotador Bajo.")
                 print("🔵 Desactivando salida (Equipo 1)")
                 client.write_coil(address=0, value=False, slave=31)
                 print ("Espera 2 minutos para reintentar")
-                time.sleep(120)
+                time.sleep(10)
                 continue
             Flotador_A = Alto.bits[0]
             Flotador_B = Bajo.bits[0]
@@ -84,27 +80,24 @@ while True:
             print(f"Flotador Bajo: {'ON' if Flotador_B else 'OFF'}")
                 # Control del equipo de SALIDA
             if  not Flotador_B and not Flotador_A:
-                if not salida.bits[0] :
-                    print("🔴 Activando salida (Equipo 1)")
-                    client.write_coil(address=0, value=True, slave= 31)
-                    #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
+                print("🔴 Activando salida (Equipo 1)")
+                client.write_coil(address=0, value=True, slave= 31)
+                #client.write_coil(COIL_SALIDA, True, unit=UNIT_SALIDA)
 
             if Flotador_A and Flotador_B :
-                if salida.bits[0] :
-                    print("🔵 Desactivando salida (Equipo 1)")
-                    client.write_coil(address=0, value=False, slave=31)
-                    #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
-                    print ("Espera 2 minutos para reintentar")
-                    time.sleep(120)
+               print("🔵 Desactivando salida (Equipo 1)")
+               client.write_coil(address=0, value=False, slave=31)
+               #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+               print ("Espera 2 minutos para reintentar")
+               time.sleep(120)
         
             if Flotador_A and not Flotador_B :
                 print ("Error en flotadores, Favor de Revisar")
-                if salida.bits[0] :
-                    print("🔵 Desactivando salida (Equipo 1)")
-                    client.write_coil(address=0, value=False, slave=31)
-                    #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
-                    print ("Espera 2 minutos para reintentar")
-                    time.sleep(120)
+                print("🔵 Desactivando salida (Equipo 1)")
+                client.write_coil(address=0, value=False, slave=31)
+                #client.write_coil(COIL_SALIDA, False, unit=UNIT_SALIDA)
+                print ("Espera 2 minutos para reintentar")
+                time.sleep(120)
                 
                 # Estado actual de salida
             salida = client.read_coils(address=0,slave=31)
