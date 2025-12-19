@@ -5,7 +5,7 @@ import time
 # ---------------------------------------------------
 # CONFIGURACIÓN
 # ---------------------------------------------------
-PUERTO = "/dev/ttyHS0"
+"/dev/ttyHS0"
 BAUDIOS = 9600
 ID_POZO = 31    # Esclavo que controla la bomba (Salida)
 ID_TANQUE = 32  # Esclavo que lee los flotadores (Entradas)
@@ -17,7 +17,7 @@ TIEMPO_REINTENTO_ERROR = 10 # Segundos tras un error
 def iniciar_cliente():
     """Crea y conecta el cliente Modbus asegurando un inicio limpio."""
     client = ModbusSerialClient(
-        port=PUERTO,
+        port= "/dev/ttyHS0" ,
         baudrate=BAUDIOS,
         bytesize=8,
         parity='N',
