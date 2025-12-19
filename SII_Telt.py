@@ -17,14 +17,17 @@ TIEMPO_REINTENTO_ERROR = 10 # Segundos tras un error
 def iniciar_cliente():
     """Crea y conecta el cliente Modbus asegurando un inicio limpio."""
     client = ModbusSerialClient(
-        port=PUERTO,
-        baudrate=BAUDIOS,
+        port="/dev/ttyHS0",
+        baudrate=9600,
         bytesize=8,
         parity='N',
         stopbits=1,
-        timeout=2,  # Aumenté ligeramente el timeout para dar margen al Teltonika
-        reconnect_delay=5,
-        retries=3
+        timeout=1,
+        reconnect_delay= 600,
+        reconnect_delay_max= 6000,
+        retries= 10,
+        name= "com",
+        handle_local_echo= False
     )
     return client
 
