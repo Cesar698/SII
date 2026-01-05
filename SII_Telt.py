@@ -58,7 +58,7 @@ def control_pozo():
             # PASO 1: LEER ESTADO DEL TANQUE (Esclavo 32)
             # Leemos 2 bits juntos (Dirección 0 y 1) para eficiencia
             # ---------------------------------------------------
-            lectura_tanque = client.read_discrete_inputs(address=0, count=2, slave=ID_TANQUE)
+            lectura_tanque = client.read_discrete_inputs(address=0, count=2, device_id=ID_TANQUE)
 
             if lectura_tanque.isError():
                 print(f"Error leyendo Tanque (ID {ID_TANQUE}). Intento de recuperación...")
@@ -68,7 +68,7 @@ def control_pozo():
                 if errores_consecutivos >= 3:
                     print("Demasiados errores. Apagando bomba por seguridad.")
                     # Intentar apagar bomba antes de reiniciar (Fail-safe)
-                    client.write_coil(address=0, value=False, slave=ID_POZO)
+                    client.write_coil(address=0, value=False, device_id=ID_POZO)
                     client = reiniciar_conexion(client)
                     errores_consecutivos = 0
                 
@@ -115,7 +115,7 @@ def control_pozo():
             # ---------------------------------------------------
             if accion_requerida is not None:
                 if accion_requerida != ultimo_estado_bomba:
-                    resp_pozo = client.write_coil(address=0, value=accion_requerida, slave=ID_POZO)
+                    resp_pozo = client.write_coil(address=0, value=accion_requerida, device_id=ID_POZO)
                     
                     if resp_pozo.isError():
                         print(f" Error escribiendo en Pozo (ID {ID_POZO})")
