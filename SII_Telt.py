@@ -112,7 +112,7 @@ def control_pozo():
 
         except Exception as e:
             errores_consecutivos += 1
-            print(f"Error ({errores_consecutivos}/{MAX_ERRORES}): {e}")
+            print(f"Error EN TANQUE({errores_consecutivos}/{MAX_ERRORES}): {e}")
 
             apagar_bomba_seguridad(client)
 
