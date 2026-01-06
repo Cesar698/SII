@@ -93,6 +93,7 @@ def control_pozo():
             if not flotador_bajo and not flotador_alto:
                 accion = True
                 print("➡ Tanque vacío → ENCENDER")
+                resp = client.write_coil(0, accion, device_id=ID_POZO)
             elif flotador_bajo and flotador_alto:
                 accion = False
                 print("➡ Tanque lleno → APAGAR")
