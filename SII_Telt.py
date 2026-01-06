@@ -59,7 +59,7 @@ def control_pozo():
             # Leemos 2 bits juntos (Dirección 0 y 1) para eficiencia
             try:
                     # ---------------------------------------------------
-                lectura_tanque = client.read_discrete_inputs(address=0, count=2, device_id=ID_TANQUE)
+                lectura_tanque = client.read_discrete_inputs(address=0, device_id=ID_TANQUE)
 
                 if lectura_tanque.isError():
                     print(f"Error leyendo Tanque (ID {ID_TANQUE}). Intento de recuperación...")
