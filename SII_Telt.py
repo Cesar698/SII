@@ -43,7 +43,7 @@ def reiniciar_conexion(client):
         client.close()
     except:
         pass
-    time.sleep(2)
+    time.sleep(10)
     client = iniciar_cliente()
     conectar(client)
     return client
