@@ -73,7 +73,7 @@ def control_pozo():
                     errores_consecutivos = 0
                 
                 time.sleep(TIEMPO_REINTENTO_ERROR)
-                continue # Salta al siguiente ciclo del while
+
             else:
                 
             # Si la lectura es exitosa, reseteamos contador de errores
