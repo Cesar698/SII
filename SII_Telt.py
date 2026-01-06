@@ -53,9 +53,8 @@ def apagar_bomba_seguridad(client):
     try:
         client.write_coil(0, False, device_id=ID_POZO)
         print("BOMBA APAGADA (Fail-Safe)")
-    except:
-        print("⚠ No se pudo apagar bomba")
-        return
+    except Exception as e:
+        print(f"⚠ No se pudo apagar bomba {e}")
 
 
 def control_pozo():
