@@ -57,24 +57,27 @@ def control_pozo():
             # ---------------------------------------------------
             # PASO 1: LEER ESTADO DEL TANQUE (Esclavo 32)
             # Leemos 2 bits juntos (Dirección 0 y 1) para eficiencia
-            # ---------------------------------------------------
-            lectura_tanque = client.read_discrete_inputs(address=0, count=2, device_id=ID_TANQUE)
+            try:
+                    # ---------------------------------------------------
+                lectura_tanque = client.read_discrete_inputs(address=0, count=2, device_id=ID_TANQUE)
 
-            if lectura_tanque.isError():
-                print(f"Error leyendo Tanque (ID {ID_TANQUE}). Intento de recuperación...")
-                errores_consecutivos += 1
-                
-                # Si fallamos 3 veces seguidas, asumimos desconexión y reiniciamos puerto
-                if errores_consecutivos >= 3:
-                    print("Demasiados errores. Apagando bomba por seguridad.")
-                    # Intentar apagar bomba antes de reiniciar (Fail-safe)
-                    client.write_coil(address=0, value=False, device_id=ID_POZO)
-                    client = reiniciar_conexion(client)
-                    errores_consecutivos = 0
-                
-                time.sleep(TIEMPO_REINTENTO_ERROR)
+                if lectura_tanque.isError():
+                    print(f"Error leyendo Tanque (ID {ID_TANQUE}). Intento de recuperación...")
+                    errores_consecutivos += 1
+                    
+                    # Si fallamos 3 veces seguidas, asumimos desconexión y reiniciamos puerto
+                    if errores_consecutivos >= 3:
+                        print("Demasiados errores. Apagando bomba por seguridad.")
+                        # Intentar apagar bomba antes de reiniciar (Fail-safe)
+                        client.write_coil(address=0, value=False, device_id=ID_POZO)
+                        client = reiniciar_conexion(client)
+                        errores_consecutivos = 0
+                    
+                    time.sleep(TIEMPO_REINTENTO_ERROR)
+            except Exception as e:
+                print(f" Excepción de lectura: {e}")
 
-            else:
+           
                 
             # Si la lectura es exitosa, reseteamos contador de errores
                 errores_consecutivos = 0
