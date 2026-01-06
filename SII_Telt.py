@@ -55,6 +55,7 @@ def apagar_bomba_seguridad(client):
         print("BOMBA APAGADA (Fail-Safe)")
     except:
         print("⚠ No se pudo apagar bomba")
+        return
 
 
 def control_pozo():
