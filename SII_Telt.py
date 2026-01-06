@@ -32,7 +32,7 @@ def iniciar_cliente():
 
 def conectar(client):
     if not client.connected:
-        print("🔌 Conectando puerto Modbus...")
+        print(" Conectando puerto Modbus...")
         return client.connect()
     return True
 
