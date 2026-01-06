@@ -24,7 +24,7 @@ def iniciar_cliente():
         parity='N',
         stopbits=1,
         timeout=1,
-        retries=0,              # IMPORTANTE: evitamos bloqueos internos
+        retries=10,              # IMPORTANTE: evitamos bloqueos internos
         handle_local_echo=False
     )
     return client
