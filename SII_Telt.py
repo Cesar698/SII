@@ -43,7 +43,7 @@ def reiniciar_conexion(client):
         client.close()
     except:
         pass
-    time.sleep(10)
+    time.sleep(5)
     client = iniciar_cliente()
     conectar(client)
     return client
@@ -79,6 +79,7 @@ def control_pozo():
 
             if lectura.isError():
                 raise Exception("Error Modbus lectura tanque")
+                
 
             errores_consecutivos = 0
 
