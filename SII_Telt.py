@@ -23,7 +23,7 @@ def iniciar_cliente():
         bytesize=8,
         parity='N',
         stopbits=1,
-        timeout=10,
+        timeout=1,
         retries=0,              # IMPORTANTE: evitamos bloqueos internos
         handle_local_echo=False
     )
